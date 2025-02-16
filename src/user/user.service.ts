@@ -21,4 +21,8 @@ export class UserService {
     if (!user) return false;
     return bcrypt.compare(password, user.password);
   }
+
+  async findOne(username: string): Promise<User | undefined> {
+    return await this.userModel.findOne({ username });
+  }
 }
