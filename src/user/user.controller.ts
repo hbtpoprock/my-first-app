@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Request, Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('user')
 export class UserController {
@@ -14,14 +15,18 @@ export class UserController {
     return { message: 'User registered successfully', user };
   }
 
+  @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Body() body: { username: string; password: string }) {
+  async login(
+    @Request() req,
+    @Body() body: { username: string; password: string },
+  ) {
     const isValid = await this.userService.validateUser(
       body.username,
       body.password,
     );
     if (isValid) {
-      return { message: 'Login successful' };
+      return { message: 'Login successful', reqUser: req.user };
     } else {
       return { message: 'Invalid credentials' };
     }
