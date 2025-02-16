@@ -2,6 +2,7 @@ import { Request, Body, Controller, Post, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/auth/jwt-auth.guard';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('user')
 export class UserController {
@@ -12,10 +13,15 @@ export class UserController {
 
   @Public()
   @Post('register')
-  async register(@Body() body: { username: string; password: string }) {
+  async register(
+    @Body()
+    registerDto: RegisterDto,
+  ) {
     const user = await this.userService.createUser(
-      body.username,
-      body.password,
+      registerDto.username,
+      registerDto.password,
+      registerDto.name,
+      registerDto.age,
     );
     return { message: 'User registered successfully', user };
   }

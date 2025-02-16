@@ -9,9 +9,19 @@ export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   // Create a new user
-  async createUser(username: string, password: string): Promise<User> {
+  async createUser(
+    username: string,
+    password: string,
+    name: string,
+    age: number,
+  ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10); // Hash password before saving
-    const newUser = new this.userModel({ username, password: hashedPassword });
+    const newUser = new this.userModel({
+      username,
+      password: hashedPassword,
+      name,
+      age,
+    });
     return newUser.save();
   }
 
