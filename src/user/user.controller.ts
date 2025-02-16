@@ -7,13 +7,19 @@ export class UserController {
 
   @Post('register')
   async register(@Body() body: { username: string; password: string }) {
-    const user = await this.userService.createUser(body.username, body.password);
+    const user = await this.userService.createUser(
+      body.username,
+      body.password,
+    );
     return { message: 'User registered successfully', user };
   }
 
   @Post('login')
   async login(@Body() body: { username: string; password: string }) {
-    const isValid = await this.userService.validateUser(body.username, body.password);
+    const isValid = await this.userService.validateUser(
+      body.username,
+      body.password,
+    );
     if (isValid) {
       return { message: 'Login successful' };
     } else {
