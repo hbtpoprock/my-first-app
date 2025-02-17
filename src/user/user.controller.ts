@@ -1,8 +1,17 @@
-import { Request, Body, Controller, Post, Get } from '@nestjs/common';
+import {
+  Request,
+  Body,
+  Controller,
+  Post,
+  Get,
+  Patch,
+  Param,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/auth/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -35,4 +44,17 @@ export class UserController {
   getProfile(@Request() req) {
     return req.user;
   }
+
+  //edit user info with running version api
+  @Patch(':id')
+  async updateUser(
+    @Param('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(userId, updateUserDto);
+  }
+
+  //soft-delete user api
+
+  //search users api that returns array of users with pagination
 }

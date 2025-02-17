@@ -1,8 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './user.schema';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -42,5 +48,38 @@ export class UserService {
 
   async findOne(username: string): Promise<User | undefined> {
     return await this.userModel.findOne({ username });
+  }
+
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Partial<User>> {
+    try {
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        userId,
+        {
+          $set: { name: updateUserDto.name, age: updateUserDto.age },
+          $inc: { __v: 1 },
+        },
+        { new: true, runValidators: true },
+      );
+
+      if (!updatedUser) {
+        throw new NotFoundException('User not found');
+      }
+
+      const userObj = JSON.parse(JSON.stringify(updatedUser));
+      const { password, ...result } = userObj;
+      return result;
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new HttpException(
+          `Validation Error: ${error.message}`,
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        throw error; // Re-throw other errors
+      }
+    }
   }
 }
