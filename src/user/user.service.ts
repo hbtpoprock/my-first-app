@@ -5,14 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { User, UserDocument } from './user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SoftDeleteModel } from 'mongoose-delete';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+  ) {}
 
   // Create a new user
   async createUser(
@@ -81,5 +83,23 @@ export class UserService {
         throw error; // Re-throw other errors
       }
     }
+  }
+
+  async softDeleteUser(userId: string): Promise<string> {
+    const user = await this.userModel.findById({ _id: userId });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    user.delete();
+    return `User with ID ${userId} successfully deleted`;
+  }
+
+  async restoreUser(userId: string): Promise<string> {
+    const user = await this.userModel.findOneDeleted({ _id: userId });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    user.restore();
+    return `User with ID ${userId} successfully restored`;
   }
 }

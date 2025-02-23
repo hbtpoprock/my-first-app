@@ -6,6 +6,7 @@ import {
   Get,
   Patch,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -45,7 +46,6 @@ export class UserController {
     return req.user;
   }
 
-  //edit user info with running version api
   @Patch(':id')
   async updateUser(
     @Param('id') userId: string,
@@ -54,7 +54,15 @@ export class UserController {
     return this.userService.updateUser(userId, updateUserDto);
   }
 
-  //soft-delete user api
+  @Delete(':id')
+  async softDeleteUser(@Param('id') userId: string): Promise<string> {
+    return await this.userService.softDeleteUser(userId);
+  }
 
-  //search users api that returns array of users with pagination
+  @Patch(':id/restore')
+  async restoreUser(@Param('id') userId: string): Promise<string> {
+    return await this.userService.restoreUser(userId);
+  }
+
+  // search users api that returns array of users with pagination
 }
