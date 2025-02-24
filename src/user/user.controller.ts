@@ -7,12 +7,15 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { Public } from 'src/auth/jwt-auth.guard';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './user.schema';
 
 @Controller('user')
 export class UserController {
@@ -64,5 +67,17 @@ export class UserController {
     return await this.userService.restoreUser(userId);
   }
 
-  // search users api that returns array of users with pagination
+  @Get('search')
+  async searchUsers(
+    @Query('query') query: string,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ): Promise<{
+    data: User[];
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    return this.userService.searchUsers(query, page, limit);
+  }
 }

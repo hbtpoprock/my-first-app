@@ -102,4 +102,50 @@ export class UserService {
     user.restore();
     return `User with ID ${userId} successfully restored`;
   }
+
+  async searchUsers(
+    query: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    data: User[];
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  }> {
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Build the filter object based on the query
+    const filter = query
+      ? {
+          $or: [
+            { username: { $regex: query, $options: 'i' } },
+            { name: { $regex: query, $options: 'i' } },
+            ...(isNaN(Number(query)) ? [] : [{ age: Number(query) }]),
+          ],
+        }
+      : {};
+
+    // Retrieve the filtered data with pagination
+    const data = await this.userModel
+      .find(filter)
+      .select('-password -deleted') // Exclude the password field
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    // Get the total count of documents matching the filter
+    const totalItems = await this.userModel.countDocuments(filter).exec();
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      data,
+      totalItems,
+      currentPage: page,
+      totalPages,
+    };
+  }
 }
