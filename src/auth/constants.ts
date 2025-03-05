@@ -6,11 +6,15 @@ export const jwtConstants = {
 export interface UserPayload {
   _id: string;
   username: string;
+  name: string;
+  age: number;
   createdAt: Date;
-  __v: number;
+  deleted: boolean;
 }
 
 export interface JwtPayload {
   username: string;
   sub: string;
+  name: string;
+  age: number;
 }
