@@ -30,6 +30,8 @@ export class UserController {
     @Body()
     registerDto: RegisterDto,
   ) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const user = await this.userService.createUser(
       registerDto.username,
       registerDto.password,
