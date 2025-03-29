@@ -7,9 +7,10 @@ import { TopToken, TopTokenSchema } from './top-token.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: TopToken.name, schema: TopTokenSchema },
-    ]), // Register the TopToken schema
+    MongooseModule.forFeature(
+      [{ name: TopToken.name, schema: TopTokenSchema }],
+      'topTokensDB',
+    ), // Register the TopToken schema
     HttpModule, // Allows making HTTP requests
   ],
   controllers: [TopTokensController],

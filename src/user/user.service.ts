@@ -13,7 +13,8 @@ import { SoftDeleteModel } from 'mongoose-delete';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(User.name, 'usersDB')
+    private userModel: SoftDeleteModel<UserDocument>,
   ) {}
 
   // Create a new user

@@ -9,7 +9,8 @@ import { firstValueFrom } from 'rxjs';
 export class TopTokensService {
   constructor(
     private readonly httpService: HttpService,
-    @InjectModel(TopToken.name) private topTokenModel: Model<TopTokenDocument>, // Ensure the injection is correct
+    @InjectModel(TopToken.name, 'topTokensDB')
+    private topTokenModel: Model<TopTokenDocument>, // Ensure the injection is correct
   ) {}
 
   async getTopTokens() {

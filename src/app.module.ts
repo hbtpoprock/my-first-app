@@ -10,9 +10,15 @@ import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/top-tokens'),
-    // UserModule,
-    // AuthModule,
+    // MongooseModule.forRoot('mongodb://localhost:27017/my-first-app'),
+    MongooseModule.forRoot('mongodb://localhost:27017/users', {
+      connectionName: 'usersDB',
+    }),
+    MongooseModule.forRoot('mongodb://localhost:27017/top-tokens', {
+      connectionName: 'topTokensDB',
+    }),
+    UserModule,
+    AuthModule,
     TopTokensModule,
   ],
   controllers: [AppController],
