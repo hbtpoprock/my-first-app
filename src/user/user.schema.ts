@@ -21,5 +21,4 @@ export class User {
 export type UserDocument = User & Document & SoftDeleteDocument;
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// Apply the mongoose-delete plugin to the schema
 UserSchema.plugin(mongooseDelete, { deletedAt: true, overrideMethods: 'all' });

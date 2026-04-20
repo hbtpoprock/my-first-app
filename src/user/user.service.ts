@@ -17,7 +17,6 @@ export class UserService {
     private userModel: SoftDeleteModel<UserDocument>,
   ) {}
 
-  // Create a new user
   async createUser(
     username: string,
     password: string,
@@ -32,7 +31,7 @@ export class UserService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new this.userModel({
       username,
       password: hashedPassword,
@@ -42,8 +41,8 @@ export class UserService {
     return newUser.save();
   }
 
-  // Validate user login
   async validateUser(username: string, password: string): Promise<boolean> {
+    console.log('userService validateUser');
     const user = await this.userModel.findOne({ username });
     if (!user) return false;
     return bcrypt.compare(password, user.password);
@@ -81,7 +80,7 @@ export class UserService {
           HttpStatus.BAD_REQUEST,
         );
       } else {
-        throw error; // Re-throw other errors
+        throw error;
       }
     }
   }
@@ -114,10 +113,8 @@ export class UserService {
     currentPage: number;
     totalPages: number;
   }> {
-    // Calculate the number of documents to skip
     const skip = (page - 1) * limit;
 
-    // Build the filter object based on the query
     const filter = query
       ? {
           $or: [
@@ -128,18 +125,15 @@ export class UserService {
         }
       : {};
 
-    // Retrieve the filtered data with pagination
     const data = await this.userModel
       .find(filter)
-      .select('-password -deleted') // Exclude the password field
+      .select('-password -deleted')
       .skip(skip)
       .limit(limit)
       .exec();
 
-    // Get the total count of documents matching the filter
     const totalItems = await this.userModel.countDocuments(filter).exec();
 
-    // Calculate the total number of pages
     const totalPages = Math.ceil(totalItems / limit);
 
     return {
