@@ -10,8 +10,8 @@ import { TopToken, TopTokenSchema } from './top-token.schema';
     MongooseModule.forFeature(
       [{ name: TopToken.name, schema: TopTokenSchema }],
       'topTokensDB',
-    ), // Register the TopToken schema
-    HttpModule, // Allows making HTTP requests
+    ),
+    HttpModule,
   ],
   controllers: [TopTokensController],
   providers: [TopTokensService],
