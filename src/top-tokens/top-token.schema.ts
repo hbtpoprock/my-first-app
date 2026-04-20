@@ -1,11 +1,10 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-// Disable the default _id field and use your custom `id`
 @Schema({ timestamps: true })
 export class TopToken {
   @Prop({ required: true })
-  _id: string; // This will be used as the unique identifier, and you can set it as `_id` manually
+  _id: string;
 
   @Prop()
   name: string;
