@@ -7,23 +7,30 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    // MongooseModule.forRoot('mongodb://localhost:27017/my-first-app'),
-    MongooseModule.forRoot('mongodb://localhost:27017/my-first-app', {
-      connectionName: 'usersDB',
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/top-tokens', {
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      connectionName: 'usersDB',
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('USERS_MONGODB_URI'),
+      }),
+    }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
       connectionName: 'topTokensDB',
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('TOP_TOKENS_MONGODB_URI'),
+      }),
     }),
     UserModule,
     AuthModule,
     TopTokensModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
   ],
   controllers: [AppController],
   providers: [
