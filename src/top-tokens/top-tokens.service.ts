@@ -22,6 +22,7 @@ export class TopTokensService {
 
       await this.topTokenModel.deleteMany({});
       const tokensWithCustomId = tokens.map(({ id, ...tokenData }) => ({
+        _id: id,
         ...tokenData,
       }));
 
